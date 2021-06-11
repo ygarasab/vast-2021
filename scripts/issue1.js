@@ -9,72 +9,91 @@ const parseReportsToLocationDataset = reports => {
 
 }
 
-const displayBars = setMapView =>{
 
-    var margin = {top: 20, right: 30, bottom: 40, left: 400},
-        width = 1200 - margin.left - margin.right,
-        height = 250 - margin.top - margin.bottom;
+const getFrequencyOnPeriod = (data, start, end) => {
+
+    if(start) data = data.filter(line => line.time >= start)
+    if(end) data = data.filter(line => line.time <= end)
+
+    let labels = [...new Set(data.map(line => line.location))]
+    return labels.map(label => ({label, count : data.filter(line => line.location === label).length}))
+
+}
+
+const displayBars = data =>{
+
+    var margin = {top: 20, right: 30, bottom: 40, left: 20},
+        width = 1000 - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
+
+    data.sort(function (a, b) {
+        return d3.descending(Math.abs(a.count), Math.abs(b.count))
+    })
+
+    if(data.length > 7) data = data.slice(0,7)
+    height = 500;
 
 // append the svg object to the body of the page
-    var svg = d3.select("#issue1bars")
+    let svg = d3.select("#issue1bars")
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", 1000)
+        .attr("height",600)
         .append("g")
         .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+            "translate(20,10)");
 
-// Parse the Data
-    d3.json("data/gdp-to-indicator-correlation.json", data => {
+    let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+        y = d3.scaleLinear().rangeRound([height, 0]);
 
-        d3.select("#map-label")
-            .text('Employment in agriculture (% of total employment) (modeled ILO estimate)')
+    x.domain( [...new Set(data.map(line => line.label))]);
+    y.domain([0, 16]);
 
-        data.sort(function (a, b) {
-            return d3.descending(Math.abs(a.value), Math.abs(b.value))
+    svg.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(5))
+    ;
+
+// Create rectangles
+    let bars = svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append("g");
+
+    bars.append('rect')
+        .attr('class', 'bar')
+        .attr("x", function(d) { return x(d.label); })
+        .attr("y", function(d) { return y(d.count); })
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return height - y(d.count); });
+
+    bars.append("text")
+        .text(function(d) {
+            return d.count;
         })
-        // Add X axis
-        var x = d3.scaleLinear()
-            .domain([0, .8])
-            .range([0, width]);
-        svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
-            .style("text-anchor", "end");
-
-        // Y axis
-        var y = d3.scaleBand()
-            .range([0, height])
-            .domain(data.map(function (d) {
-                return d.indicator;
-            }))
-            .padding(.1);
-        svg.append("g")
-            .call(d3.axisLeft(y))
-
-        //Bars
-        let bars = svg.selectAll("myRect")
-            .data(data)
-            .enter()
-            .append("rect")
-
-        bars.on('click', d => { setMapView(d.indicator); d3.select("#map-label").text(d.indicator)})
-            .attr("x", x(0))
-            .attr("y", d => y(d.indicator))
-            .attr("width", d => Math.abs(x(d.value)))
-            .attr("height", y.bandwidth())
-            .attr("fill", d => d.value > 0 ? 'blue' : "red")
+        .attr("x", function(d){
+            return x(d.label) + x.bandwidth()/2;
+        })
+        .attr("y", function(d){
+            return y(d.count) - 5;
+        })
+        .attr("font-family" , "sans-serif")
+        .attr("font-size" , "14px")
+        .attr("fill" , "black")
+        .attr("text-anchor", "middle");
 
 
-    })
 }
 
 
 const issue1 = () => {
 
     let locations = parseReportsToLocationDataset(reports)
-    console.log(locations)
+    let frequency = getFrequencyOnPeriod(locations)
+    displayBars(frequency)
 
 }
