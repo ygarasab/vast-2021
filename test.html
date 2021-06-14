@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+
+    <title>Document</title>
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+</head>
+<body>
+
+<div id="issue1">
+    <svg id="issue1map" width="1300" height="500"></svg>
+</div>
+<script>
+    d3.json('abila.json', map=> {
+        let svg = d3.select("#issue1map"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+        let path = d3.geoPath();
+        let projection = d3.geoMercator()
+            .fitExtent([[10,10], [width - 10, height - 10]], map);
+
+
+        let target = svg.append("g")
+            .selectAll("path")
+            .data(map.features)
+            .enter()
+            .append("path")
+            .attr("d", d3.geoPath().projection(projection))
+            .style("stroke", "#000")
+            .style("opacity", .8)
+            .style("fill", 'none')
+    })
+</script>
+
+</body>
+</html>

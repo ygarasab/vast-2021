@@ -1,34 +1,37 @@
-
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link rel="stylesheet" href="style/slider.css">
 
-
-    <title>Document</title>
-    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-    <script src="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.js"></script>
-    <script src="https://unpkg.com/d3-simple-slider"></script>
-
-    <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-            crossorigin="anonymous"
-    />
-
-
-    <!-- Range slider style -->
-    <link href="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.css" rel="stylesheet">
-
+    <style>
+        path {
+            stroke: #fff;
+        }
+        .circle-text{
+            font-family: Arial;
+            font-size: 9pt;
+            text-align: center;
+            font-weight: bolder;
+        }
+    </style>
 </head>
-<body>
-    huhihihi
-    <div id="issue1bars"></div>
-<script src="scripts/issue1.js"></script>
-<script src="scripts/main.js"></script>
 
+<body style="display: block; margin-left: 80px">
+<div id="thburst" style="display: inline-block">
+    <p style="text-align: center; font-size: 14pt">Termos Relevantes por Período</p>
+    <div  id="sunburst"></div>
+</div>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<svg style="display: inline-block" id="map" width="800" height="520"></svg>
+<div id="vis">
+</div>
+<script src="scripts/geocode.js"></script>
+
+<script src="scripts/flare-parser.js"></script>
+<script src="scripts/map-handler.js"></script>
+<script src="scripts/event-slider.js"></script>
+<script src="scripts/sunburst.js"></script>
+<script src="scripts/main.js"></script>
 </body>
-</html>

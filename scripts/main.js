@@ -1,19 +1,29 @@
-let full, neighbors, reports;
+let full, ccdata, reports, map, wordsinfluence;
+let listennerTO;
 
-d3.csv('data/full.csv', data => {
+const runTimeChanges = (start, end) => {
+        let newFlare = getFlare(start, end)
+        renderSunburst(newFlare)
+}
 
-    full = data
+d3.queue()
+    .defer(d3.csv, 'data/reports.csv')
+    .defer(d3.csv, 'data/ccdata.csv')
+    .defer(d3.json, 'data/wordsinfluence.json')
+    .defer(d3.json, 'data/abila.json')
+    .await( (error, d1, d2, d3, d4) => {
+        reports = d1;
+        ccdata = d2;
+        wordsinfluence = d3;
+        map = d4;
 
-    d3.csv('data/reports.csv', data => {
+        let flare = getFlare(0, 9999999999999999999999);
+        loadSunBurst()
+        renderSunburst(flare);
 
-        reports = data
-
-        d3.json('data/neighbors.json', data => {
-            neighbors = data
-
-            issue1()
-        })
+        mapSVG = drawMap()
 
     })
 
-})
+
+
