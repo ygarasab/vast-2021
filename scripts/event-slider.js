@@ -134,15 +134,20 @@ const renderSlider = () => {
             .attr("x", x(h))
             .text(formatDate(h));
 
-        let back = h.getTime() - 3000000
+        let back = h.getTime() - 2000000
         // filter data set and redraw plot
         var newData = dataset.filter(function (d) {
             return d.date < h && d.date.getTime() > back;
         })
         drawPlot(newData);
-        drawCalls(newData)
+
         clearTimeout(listennerTO)
-        listennerTO = setTimeout( () => runTimeChanges(new Date(back), h), 500)
+        listennerTO = setTimeout( () => {
+            console.log('hey')
+            drawCalls(newData)
+            runTimeChanges(new Date(back), h)
+            showTopTweet(new Date(back), h)
+        }, 500)
     }
 
     function handleMouseOver(d) {  // Add interactivity

@@ -15,7 +15,7 @@ const getFlare = (start, end) => {
         for(let word of words){
 
             let size = localData.filter(line => line.word === word && line.author === influencer).length
-            if(size > 10) children[i].children.push({name : word, size})
+            if(size > 7) children[i].children.push({name : word, size})
         }
 
     }
